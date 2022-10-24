@@ -40,7 +40,7 @@ variable "helm_repo_url" {
 #variable "istio_global_name" {
 #  description = "Istio telementry mesh name"
 #  default     = "mesh1"
-}
+#}
 
 #variable "istio_pilot_env_PilotSkipValidateTrustDomain" {
 #  type        = string
