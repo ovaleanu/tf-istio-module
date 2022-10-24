@@ -19,7 +19,7 @@ variable "timeout" {
 variable "istio_version" {
   description = "Version of the Helm chart"
   type        = string
-  default     = "1.16.1"
+  default     = "1.15.2"
 }
 
 variable "helm_repo_url" {
