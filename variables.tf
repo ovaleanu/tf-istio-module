@@ -16,10 +16,6 @@ variable "timeout" {
   default     = 120
 }
 
-variable "cluster_name" {
-  description = "EKS cluster name (required)"
-}
-
 variable "istio_version" {
   description = "Version of the Helm chart"
   type        = string
