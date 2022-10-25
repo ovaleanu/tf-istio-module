@@ -1,9 +1,6 @@
 resource "kubernetes_namespace" "istio_system" {
   metadata {
     name = "istio-system"
-    labels = {
-      istio-injection = "enabled"
-    }
   }
 }
 
@@ -17,6 +14,10 @@ resource "helm_release" "istio-base" {
   cleanup_on_fail  = var.cleanup_on_fail
   force_update     = var.force_update
   depends_on = [kubernetes_namespace.istio_system]
+
+  values = [
+    yamlencode(var.base_settings)
+  ]
 }
 
 resource "helm_release" "istiod" {
@@ -28,18 +29,30 @@ resource "helm_release" "istiod" {
   timeout          = var.timeout
   cleanup_on_fail  = var.cleanup_on_fail
   force_update     = var.force_update
-  depends_on = [kubernetes_namespace.istio_system, helm_release.istio-base]
+  depends_on = [helm_release.istio-base]
+
+  values = [
+    yamlencode(var.istiod_settings)
+  ]
 }
 
+resource "kubernetes_namespace" "istio_ingress" {
+  metadata {
+    name = "istio-ingress"
+    labels = {
+      istio-injection = "enabled"
+    }
+  }
+}
 
 resource "helm_release" "istio-ingressgateway" {
   repository = var.helm_repo_url
   chart      = "gateway"
   name       = "istio-ingressgateway"
-  namespace  = kubernetes_namespace.istio_system.metadata.0.name
+  namespace  = kubernetes_namespace.istio_ingress.metadata.0.name
   version    = var.istio_version
   timeout          = var.timeout
   cleanup_on_fail  = var.cleanup_on_fail
   force_update     = var.force_update
-  depends_on = [kubernetes_namespace.istio_system, helm_release.istiod]
+  depends_on = [kubernetes_namespace.istio_ingress, helm_release.istiod]
 }
