@@ -10,12 +10,6 @@ variable "force_update" {
   type        = bool
 }
 
-variable "timeout" {
-  description = "Time in seconds to wait for any individual kubernetes operation"
-  type        = number
-  default     = 120
-}
-
 variable "istio_version" {
   description = "Version of the Helm chart"
   type        = string
@@ -32,93 +26,38 @@ variable "cluster_name" {
   description = "k8s cluster name, required"
 }
 
-variable "subnets" {
-  description = "provide the subnets used by load balancer for istio gateway"
-  default     = []
-}
-
-variable "istio_aws_elb_gw_enabled" {
-  description = "enable or disable the istio gw install that has an ELB for load balancer, default true"
-  default     = false
-}
-
-variable "elb_load_balancer" {
-  default = {
-    "service" = {
-      "annotations" = {
-        "service.beta.kubernetes.io/aws-load-balancer-internal" = "true"
-      },
-      "ports" = [
-        {
-          "name"       = "https"
-          "port"       = 443
-          "protocol"   = "TCP"
-          "targetPort" = 443
-        },
-        {
-          "name"       = "http2"
-          "port"       = 80
-          "protocol"   = "TCP"
-          "targetPort" = 80
-        },
-        {
-          "name"       = "status-port"
-          "port"       = 15021
-          "protocol"   = "TCP"
-          "targetPort" = 15021
-        },
-        {
-          "name"       = "grpc"
-          "port"       = 50051
-          "protocol"   = "TCP"
-          "targetPort" = 50051
-        },
-        {
-          "name"       = "tls"
-          "port"       = 15443
-          "protocol"   = "TCP"
-          "targetPort" = 15443
-        },
-      ]
-    }
-  }
-}
-
 variable "istio_base_settings" {
   type        = map(any)
   default     = {}
   description = "Additional settings which will be passed to the Helm chart values"
 }
 
-variable "istiod_settings" {
-  type        = map(any)
-  default     = {}
-  description = "Additional settings which will be passed to the Helm chart values"
-}
-
-variable "istio_meshconfig_network" {
+variable "istiod_global_network" {
   description = "Istio telementry network name"
   default     = "network1"
 }
 
-variable "istio_meshconfig_mesh_name" {
+variable "istiod_global_meshID" {
   description = "Istio telementry mesh name"
   default     = "mesh1"
 }
 
-variable "ca_private_key" {
-  description = "the aws secret arn to use for ca_private_key"
-  default     = ""
+variable "istiod_meshConfig_accessLogFile" {
+  description = "The mesh config access log file"
+  default     = "/dev/stdout"
 }
-variable "ca_cert_chain" {
-  description = "the aws secret arn to use for the ca_cert_chain"
-  default     = ""
+
+variable "istiod_meshConfig_rootNamespace" {
+  description = "The mesh config root namespace"
+  default     = "istio-system"
 }
-variable "ca_cert" {
-  description = "the aws secret arn to use for the ca_cert"
-  default     = ""
+
+variable "istiod_meshConfig_enableAutoMtls" {
+  description = "The mesh config enable AutoMtls"
+  default     = "true"
 }
-variable "enable_aws_secret_manager_based_certs" {
-  description = "If you would like to provide your own mTLS CA certs for istio to use, enable this flag and input AWS secret ARNs required"
-  default     = false
+
+variable "istiod_meshConfig_trustDomain" {
+  description = "The trust domain corresponds to the trust root of a system"
+  default     = "td1"
 }
